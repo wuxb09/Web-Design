@@ -1,4 +1,4 @@
-module.exports = (x,y,callback) => {
+exports.calc = function (x,y,callback) {
     if (x <= 0 || y <= 0)
         setTimeout(() => 
             callback(new Error("Rectangle dimensions should be greater than zero: l = "
@@ -13,3 +13,5 @@ module.exports = (x,y,callback) => {
             }), 
             2000);
 }
+
+exports.message = "hi";
