@@ -8,7 +8,7 @@ const promoRouter = express.Router();
 promoRouter.use(bodyParser.json());
 
 promoRouter.route('/')
-.get(authenticate.verifyUser,(req,res,next) => {
+.get((req,res,next) => {
     Promotions.find({})
     .then((promotions) => {
         res.statusCode = 200;
@@ -42,7 +42,7 @@ promoRouter.route('/')
 });
 
 promoRouter.route('/:promoId')
-.get(authenticate.verifyUser,(req,res,next) => {
+.get((req,res,next) => {
     Promotions.findById(req.params.promoId)
     .then((promo) => {
         res.statusCode = 200;
