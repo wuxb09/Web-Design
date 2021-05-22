@@ -3,7 +3,10 @@ import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle} from 'rea
 import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, Row, FormFeedback} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
-import { Navbar, NavbarBrand, Nav, NavbarToggler, Collapse, NavItem, Jumbotron, Modal, ModalHeader, ModalBody} from 'reactstrap';
+import { Modal, ModalHeader, ModalBody} from 'reactstrap';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
+import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
 
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
@@ -29,6 +32,7 @@ class CommentForm extends Component {
     handleSubmit(values) {
         this.toggleModal();
         alert(JSON.stringify(values));
+        this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
     }
 
     render() {
@@ -39,10 +43,10 @@ class CommentForm extends Component {
                 <ModalBody>
                     <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
                         <Row className="form-group">
-                            <Label htmlFor="message" md={2}>Rating</Label>
+                            <Label htmlFor="rating" md={2}>Rating</Label>
                             <Col md={10}>
                                 <Control.select model=".rating" id="rating" name="rating"
-                                    className="form-control" value="5">
+                                    className="form-control" value="5" defaultValue="5">
                                     <option>1</option>
                                     <option>2</option>
                                     <option>3</option>
@@ -53,9 +57,9 @@ class CommentForm extends Component {
                         </Row>
 
                         <Row className="form-group mt-3">
-                            <Label htmlFor="yourname" md={2}>Your Name</Label>
+                            <Label htmlFor="author" md={2}>Your Name</Label>
                             <Col md={10}>
-                                <Control.text model=".yourname" id="yourname" name="yourname"
+                                <Control.text model=".author" id="author" name="author"
                                     placeholder="Your Name"
                                     className="form-control"
                                     validators={{
@@ -64,7 +68,7 @@ class CommentForm extends Component {
                                         />
                                 <Errors
                                     className="text-danger"
-                                    model=".yourname"
+                                    model=".author"
                                     show="touched"
                                     messages={{
                                         required: 'Required',
@@ -76,9 +80,9 @@ class CommentForm extends Component {
                         </Row>
                         
                         <Row className="form-group">
-                            <Label htmlFor="message" md={2}>Comment</Label>
+                            <Label htmlFor="comment" md={2}>Comment</Label>
                             <Col md={10}>
-                                <Control.textarea model=".message" id="message" name="message"
+                                <Control.textarea model=".comment" id="comment" name="comment"
                                     rows="6"
                                     className="form-control" />
                             </Col>
@@ -101,56 +105,85 @@ class CommentForm extends Component {
 
 function RenderDish({dish}) {
     return (
-        <Card>
-            <CardImg top src={dish.image} alt={dish.name} />
-            <CardBody>
-                <CardTitle>{dish.name}</CardTitle>
-                <CardText>{dish.description}</CardText>
-            </CardBody>
-        </Card>
+        <div className="col-12 col-md-5 m-1">
+            <FadeTransform in transformProps={{exitTransform: 'scale(0.5) translateY(-50%)'}}>
+                <Card>
+                    <CardImg top src={baseUrl + dish.image} alt={dish.name} />
+                    <CardBody>
+                        <CardTitle>{dish.name}</CardTitle>
+                        <CardText>{dish.description}</CardText>
+                    </CardBody>
+                </Card>
+            </FadeTransform>
+        </div>
     );
 }
 
 
-function RenderComments({comments}) {
-    return  comments.map((comment) => {
+function RenderComments({comments, postComment, dishId}) {
+    const tmp =  comments.map((comment) => {
         return (
-            <ul className="list-unstyled">
-            <li>{comment.comment}</li>
-            <li>-- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</li>
-            </ul>
+            <Fade in>
+            <div className="mt-3">
+                <li>{comment.comment}</li>
+                <li>-- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</li>
+            </div>
+            </Fade>
         );
     });
+    return (
+        <div className="col-12 col-md-5 m-1">
+            <Stagger in >
+            <ul className="list-unstyled">
+                {tmp}
+            </ul>
+            </Stagger>
+            <CommentForm dishId={dishId} postComment={postComment} />
+        </div>
+    );
 }
 
 
-class DishDetail extends Component {
-    
+class DishDetail extends Component {  
     render () {
-        return (
-            <div className="container">
-                <div className="row">
-                    <Breadcrumb>
-                        <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
-                        <BreadcrumbItem active>{this.props.dish.name}</BreadcrumbItem>
-                    </Breadcrumb>
-                    <div className="col-12">
-                        <h3>{this.props.dish.name}</h3>
-                        <hr />
-                    </div>                
+        if (this.props.isLoading) {
+            return(
+                <div className="container">
+                    <div className="row">            
+                        <Loading />
+                    </div>
                 </div>
-                <div className="row">
-                    <div className="col-12 col-md-5 m-1">
+            );
+        }
+        else if (this.props.errMess) {
+            return(
+                <div className="container">
+                    <div className="row">            
+                        <h4>{this.props.errMess}</h4>
+                    </div>
+                </div>
+            );
+        }
+        else if (this.props.dish != null) {
+            return (
+                <div className="container">
+                    <div className="row">
+                        <Breadcrumb>
+                            <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
+                            <BreadcrumbItem active>{this.props.dish.name}</BreadcrumbItem>
+                        </Breadcrumb>
+                        <div className="col-12">
+                            <h3>{this.props.dish.name}</h3>
+                            <hr />
+                        </div>                
+                    </div>
+                    <div className="row">
                         <RenderDish dish={this.props.dish} />
-                    </div>
-                    <div className="col-12 col-md-5 m-1">
-                        <RenderComments comments={this.props.comments} />
-                        <CommentForm />
-                    </div>
+                        <RenderComments comments={this.props.comments} postComment={this.props.postComment} dishId={this.props.dish.id} />
+                    </div> 
                 </div>
-                
-            </div>
-        );
+            );
+        }
     }
 }
 

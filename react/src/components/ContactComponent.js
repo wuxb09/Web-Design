@@ -1,7 +1,9 @@
 import { React, Component } from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, Row, FormFeedback   } from 'reactstrap';
+import { Breadcrumb, BreadcrumbItem, Button, Label, Input, Col, Row} from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { Control, LocalForm, Errors } from 'react-redux-form';
+//import {Form, FormGroup, FormFeedback} from 'reactstrap';
+import {Form} from 'react-redux-form';
+import { Control, LocalForm, Errors, actions } from 'react-redux-form';
 
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
@@ -21,52 +23,52 @@ class Contact extends Component {
             agree: false,
             contactType: 'Tel.',
             message: '',
-            touched: {
-                firstname: false,
-                lastname: false,
-                telnum: false,
-                email: false
-            }
+            // touched: {
+            //     firstname: false,
+            //     lastname: false,
+            //     telnum: false,
+            //     email: false
+            // }
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this); 
-        this.handleBlur = this.handleBlur.bind(this);   
+        //this.handleBlur = this.handleBlur.bind(this);   
     }
 
-    handleBlur = (field) => (evt) => {
-        this.setState({
-            touched: { ...this.state.touched, [field]: true }
-        });
-    }
+    // handleBlur = (field) => (evt) => {
+    //     this.setState({
+    //         touched: { ...this.state.touched, [field]: true }
+    //     });
+    // }
     
-    validate(firstname, lastname, telnum, email) {
-        const errors = {
-            firstname: '',
-            lastname: '',
-            telnum: '',
-            email: ''
-        };
+    // validate(firstname, lastname, telnum, email) {
+    //     const errors = {
+    //         firstname: '',
+    //         lastname: '',
+    //         telnum: '',
+    //         email: ''
+    //     };
 
-        if (this.state.touched.firstname && firstname.length < 3)
-            errors.firstname = 'First Name should be >= 3 characters';
-        else if (this.state.touched.firstname && firstname.length > 10)
-            errors.firstname = 'First Name should be <= 10 characters';
+    //     if (this.state.touched.firstname && firstname.length < 3)
+    //         errors.firstname = 'First Name should be >= 3 characters';
+    //     else if (this.state.touched.firstname && firstname.length > 10)
+    //         errors.firstname = 'First Name should be <= 10 characters';
 
-        if (this.state.touched.lastname && lastname.length < 3)
-            errors.lastname = 'Last Name should be >= 3 characters';
-        else if (this.state.touched.lastname && lastname.length > 10)
-            errors.lastname = 'Last Name should be <= 10 characters';
+    //     if (this.state.touched.lastname && lastname.length < 3)
+    //         errors.lastname = 'Last Name should be >= 3 characters';
+    //     else if (this.state.touched.lastname && lastname.length > 10)
+    //         errors.lastname = 'Last Name should be <= 10 characters';
 
-        const reg = /^\d+$/;
-        if (this.state.touched.telnum && !reg.test(telnum))
-            errors.telnum = 'Tel. Number should contain only numbers';
+    //     const reg = /^\d+$/;
+    //     if (this.state.touched.telnum && !reg.test(telnum))
+    //         errors.telnum = 'Tel. Number should contain only numbers';
 
-        if(this.state.touched.email && email.split('').filter(x => x === '@').length !== 1)
-            errors.email = 'Email should contain a @';
+    //     if(this.state.touched.email && email.split('').filter(x => x === '@').length !== 1)
+    //         errors.email = 'Email should contain a @';
 
-        return errors;
-    }
+    //     return errors;
+    // }
 
     handleInputChange(event) {
         const target = event.target;
@@ -79,8 +81,11 @@ class Contact extends Component {
     }
 
     handleSubmit(values) {
-        console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current State is: ' + JSON.stringify(values));
+        //console.log('Current State is: ' + JSON.stringify(values));
+        //alert('Current State is: ' + JSON.stringify(values));
+        this.props.postFeedback(values.firstname, values.lastname, values.telnum, values.email, values.agree, values.contactType, values.message);
+        //Form and model together links to the state of the store
+        this.props.resetFeedbackForm();
     }
 
     // handleSubmit(event) {
@@ -90,7 +95,7 @@ class Contact extends Component {
     // }
 
     render () {
-        const errors = this.validate(this.state.firstname, this.state.lastname, this.state.telnum, this.state.email);
+        //const errors = this.validate(this.state.firstname, this.state.lastname, this.state.telnum, this.state.email);
         return(
             <div className="container">
                 <div className="row">
@@ -135,7 +140,7 @@ class Contact extends Component {
                       <h3>Send us your Feedback</h3>
                    </div>
                     <div className="col-12 col-md-9">
-                    <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+                    <Form model="feedback" onSubmit={(values) => this.handleSubmit(values)}>
                     <Row className="form-group">
                                 <Label htmlFor="firstname" md={2}>First Name</Label>
                                 <Col md={10}>
@@ -258,7 +263,7 @@ class Contact extends Component {
                                     </Button>
                                 </Col>
                             </Row>
-                        </LocalForm>
+                        </Form>
                         {/* <Form onSubmit={this.handleSubmit}>
                         <FormGroup row>
                                 <Label htmlFor="firstname" md={2}>First Name</Label>
