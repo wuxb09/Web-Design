@@ -8,7 +8,7 @@ import Home from './HomeComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
 import DishDetail from './DishdetailComponent';
-import { addComment, fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
+import { postComment, addComment, fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 import { actions } from 'react-redux-form';
 
 //The following become part of props, original from store reducer
@@ -28,7 +28,8 @@ const mapDispatchToProps = dispatch => ({
   resetFeedbackForm: () => dispatch(actions.reset('feedback')),
   fetchComments: () => dispatch(fetchComments()),
   fetchPromos: () => dispatch(fetchPromos()),
-  fetchLeaders: () => dispatch(fetchLeaders())
+  fetchLeaders: () => dispatch(fetchLeaders()),
+  postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment))
 });
 
 class Main extends Component {
@@ -69,7 +70,7 @@ class Main extends Component {
             errMess={this.props.dishes.errMess}
             comments={this.props.comments.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))}
             commentsErrMess={this.props.comments.errMess}
-            addComment={this.props.addComment} 
+            postComment={this.props.postComment}
           />
       );
     };
