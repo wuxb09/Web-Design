@@ -1,0 +1,50 @@
+{"username": "cockie", "password": "lovely"}
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGE5OTY4MTFiZWIwNmU2M2U0MDg2MzUiLCJpYXQiOjE2MjE3NjA5NzcsImV4cCI6MTYyMTc2NDU3N30.qw_-zhCB_8OmIzCk13yIixD65gctXoBJtwNfOZ-eHP8
+
+
+{"username": "cockii", "password": "lovely"}
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MGFhMGIzMThjMzE4Y2JlYTIwZTNmZTAiLCJpYXQiOjE2MjE3NjA4NjAsImV4cCI6MTYyMTc2NDQ2MH0.ozUNj2WRodQDZwYegYr1oDwfjjbkPrnuI4E39bgtABk
+
+
+{
+      "name": "Uthappizza",
+      "image": "images/uthappizza.png",
+      "category": "mains",
+      "featured": true,
+      "label": "Hot",
+      "price": "4.99",
+      "description": "A unique combination of Indian Uthappam (pancake) and Italian pizza, topped with Cerignola olives, ripe vine cherry tomatoes, Vidalia onion, Guntur chillies and Buffalo Paneer.",
+      "comments": []
+}
+
+		{
+          "rating": 5,
+          "comment": "Imagine all the eatables, living in conFusion!"
+        },
+        {
+          "rating": 4,
+          "comment": "Sends anyone to heaven, I wish I could get my mother-in-law to eat it!"
+        },
+        {
+          "rating": 3,
+          "comment": "Eat it, just eat it!"
+        },
+        {
+          "rating": 4,
+          "comment": "Ultimate, Reaching for the stars!"
+        },
+        {
+          "rating": 2,
+          "comment": "It's your birthday, we're gonna party!"
+        },
+        {
+          "rating": 4,
+          "comment": "Really good!"
+        }
+
+
+set OPENSSL_CONF=D:\full-stack\NodeJS\conFusionServer\bin\openssl-1.1\ssl\openssl.cnf
+D:\full-stack\NodeJS\conFusionServer\bin\openssl-1.1\x64\bin\openssl genrsa -out private.key 1024
+D:\full-stack\NodeJS\conFusionServer\bin\openssl-1.1\x64\bin\openssl req -new -key private.key -out cert.csr
+D:\full-stack\NodeJS\conFusionServer\bin\openssl-1.1\x64\bin\openssl x509 -req -in cert.csr -signkey private.key -out certificate.pem
